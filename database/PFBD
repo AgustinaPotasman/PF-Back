@@ -1,0 +1,338 @@
+--
+-- PostgreSQL database cluster dump
+--
+
+-- Started on 2024-06-03 08:18:36
+
+SET default_transaction_read_only = off;
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
+--
+-- Roles
+--
+
+CREATE ROLE postgres;
+ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS PASSWORD 'SCRAM-SHA-256$4096:u1FDhYFJk0YQuYcilBTWfw==$Ma/BlvMGPDpw0VJqcvVkIsjPBNnQ6ZgK15k7Pr929oo=:jQxlEoON8PQouttj+bojocAJ8gXvSn2VVkrDz77tHKQ=';
+
+--
+-- User Configurations
+--
+
+
+
+
+
+
+
+
+--
+-- Databases
+--
+
+--
+-- Database "template1" dump
+--
+
+\connect template1
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.0
+
+-- Started on 2024-06-03 08:18:36
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+-- Completed on 2024-06-03 08:18:37
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- Database "postgres" dump
+--
+
+\connect postgres
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.0
+
+-- Started on 2024-06-03 08:18:37
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 4820 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 216 (class 1259 OID 16398)
+-- Name: Area; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Area" (
+    "Id" integer NOT NULL,
+    "Especialidad" text NOT NULL
+);
+
+
+ALTER TABLE public."Area" OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 16419)
+-- Name: CambioEstado; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CambioEstado" (
+    "Id" integer NOT NULL,
+    "CambioEstado" character varying NOT NULL,
+    "IdEstadoTurno" integer NOT NULL
+);
+
+
+ALTER TABLE public."CambioEstado" OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16426)
+-- Name: EstadoTurno; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."EstadoTurno" (
+    "Id" integer NOT NULL,
+    "Descripcion" text NOT NULL
+);
+
+
+ALTER TABLE public."EstadoTurno" OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 16405)
+-- Name: Medico; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Medico" (
+    "Id" integer NOT NULL,
+    "Nombre" character varying NOT NULL,
+    "Apellido" character varying NOT NULL,
+    "DNI" text NOT NULL,
+    "Especialidad" character varying NOT NULL,
+    "Gmail" text NOT NULL,
+    "Telefono" text NOT NULL,
+    "Foto" text,
+    "IdArea" integer NOT NULL
+);
+
+
+ALTER TABLE public."Medico" OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16412)
+-- Name: Paciente; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Paciente" (
+    "Id" integer NOT NULL,
+    "Nombre" character varying NOT NULL,
+    "Apellido" character varying NOT NULL,
+    "DNI" text NOT NULL,
+    "Gmail" text NOT NULL,
+    "ObraSocial" text NOT NULL,
+    "Contraseña" character varying NOT NULL,
+    "Telefono" text NOT NULL,
+    "Foto" text
+);
+
+
+ALTER TABLE public."Paciente" OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16433)
+-- Name: Turno; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Turno" (
+    "Id" integer NOT NULL,
+    "IdMedico" integer NOT NULL,
+    "IdPaciente" integer NOT NULL,
+    "TiempoDeEspera" time without time zone[] NOT NULL,
+    "IdArea" integer NOT NULL,
+    "TurnosPrevios" integer NOT NULL,
+    "IdEstadoTurno" integer NOT NULL,
+    "FechaHora" date NOT NULL,
+    "Sintomas" text NOT NULL
+);
+
+
+ALTER TABLE public."Turno" OWNER TO postgres;
+
+--
+-- TOC entry 4809 (class 0 OID 16398)
+-- Dependencies: 216
+-- Data for Name: Area; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Area" ("Id", "Especialidad") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4812 (class 0 OID 16419)
+-- Dependencies: 219
+-- Data for Name: CambioEstado; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."CambioEstado" ("Id", "CambioEstado", "IdEstadoTurno") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4813 (class 0 OID 16426)
+-- Dependencies: 220
+-- Data for Name: EstadoTurno; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."EstadoTurno" ("Id", "Descripcion") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4810 (class 0 OID 16405)
+-- Dependencies: 217
+-- Data for Name: Medico; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Medico" ("Id", "Nombre", "Apellido", "DNI", "Especialidad", "Gmail", "Telefono", "Foto", "IdArea") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4811 (class 0 OID 16412)
+-- Dependencies: 218
+-- Data for Name: Paciente; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Paciente" ("Id", "Nombre", "Apellido", "DNI", "Gmail", "ObraSocial", "Contraseña", "Telefono", "Foto") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4814 (class 0 OID 16433)
+-- Dependencies: 221
+-- Data for Name: Turno; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Turno" ("Id", "IdMedico", "IdPaciente", "TiempoDeEspera", "IdArea", "TurnosPrevios", "IdEstadoTurno", "FechaHora", "Sintomas") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4655 (class 2606 OID 16404)
+-- Name: Area Area_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Area"
+    ADD CONSTRAINT "Area_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 4661 (class 2606 OID 16425)
+-- Name: CambioEstado CambioEstado_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CambioEstado"
+    ADD CONSTRAINT "CambioEstado_pkey" PRIMARY KEY ("IdEstadoTurno");
+
+
+--
+-- TOC entry 4663 (class 2606 OID 16432)
+-- Name: EstadoTurno EstadoTurno_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."EstadoTurno"
+    ADD CONSTRAINT "EstadoTurno_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 4657 (class 2606 OID 16411)
+-- Name: Medico Medico_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Medico"
+    ADD CONSTRAINT "Medico_pkey" PRIMARY KEY ("IdArea");
+
+
+--
+-- TOC entry 4659 (class 2606 OID 16418)
+-- Name: Paciente Paciente_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Paciente"
+    ADD CONSTRAINT "Paciente_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 4665 (class 2606 OID 16439)
+-- Name: Turno Turno_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Turno"
+    ADD CONSTRAINT "Turno_pkey" PRIMARY KEY ("IdMedico");
+
+
+-- Completed on 2024-06-03 08:18:37
+
+--
+-- PostgreSQL database dump complete
+--
+
+-- Completed on 2024-06-03 08:18:37
+
+--
+-- PostgreSQL database cluster dump complete
+--
+
