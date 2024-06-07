@@ -1,31 +1,18 @@
-import config from './src/configs/db-configs.js';
-import pkg from 'pg';
-const { Client } = pkg;
-
-const client = require('../configs/db-config');
+const pool = require('./db-configs');
+const Turno = require('./turno');
 
 async function guardarTurno(turno) {
-  const query = `
-    INSERT INTO Turno (IdMedico, IdPaciente, TiempoDeEspera, IdArea, TurnosPrevios, IdEstadoTurno, FechaHora, Sintomas) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    RETURNING *;
-  `;
-  const values = [
-    turno.IdMedico,
-    turno.IdPaciente,
-    turno.TiempoDeEspera,
-    turno.IdArea,
-    turno.TurnosPrevios,
-    turno.IdEstadoTurno,
-    turno.FechaHora,
-    turno.Sintomas,
-  ];
+  const { idMedico, idPaciente, tiempoDeEspera, idArea, turnosPrevios, idEstadoTurno, fechaHora, sintomas } = turno;
+  const query = 'INSERT INTO "Turno" ("IdMedico", "IdPaciente", "TiempoDeEspera", "IdArea", "TurnosPrevios", "IdEstadoTurno", "FechaHora", "Sintomas") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+  const values = [idMedico, idPaciente, tiempoDeEspera, idArea, turnosPrevios, idEstadoTurno, fechaHora, sintomas];
+
   try {
-    const { rows } = await client.query(query, values);
-    return rows[0];
+    const { rows } = await pool.query(query, values);
+    return new Turno(...Turno.values(rows[0]));
   } catch (error) {
-    throw new Error('Error al guardar el turno en la base de datos: ' + error.message);
+    console.error('Error al guardar el turno:', error);
+    throw error;
   }
 }
 
-export default guardarTurno;
+export default { guardarTurno };

@@ -1,6 +1,6 @@
 const config = {
     host : "localhost",
-    database : "BDPF",
+    database : "PFBD",
     user : "postgres",
     password : "root",
     port : 5432

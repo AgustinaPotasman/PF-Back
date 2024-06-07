@@ -1,24 +1,17 @@
-const turnoRepository = require('../repositories/turno-repository');
-const Turno = require('../entities/turno.js');
+const Turno = require('./turno');
+const TurnoRepository = require('./turno-repositories');
 
-async function guardarTurno(turnoData) {
+async function guardarNuevoTurno(turnoData) {
   try {
-    const turno = new Turno(
-      turnoData.IdMedico,
-      turnoData.IdPaciente,
-      turnoData.TiempoDeEspera,
-      turnoData.IdArea,
-      turnoData.TurnosPrevios,
-      turnoData.IdEstadoTurno,
-      turnoData.FechaHora,
-      turnoData.Sintomas
-    );
-
-    const turnoGuardado = await turnoRepository.guardarTurno(turno);
+    const nuevoTurno = new Turno(...Turno.values(turnoData));
+    const turnoGuardado = await TurnoRepository.guardarTurno(nuevoTurno);
     return turnoGuardado;
   } catch (error) {
-    throw new Error('Error al guardar el turno: ' + error.message);
+    console.error('Error al guardar el nuevo turno:', error);
+    throw error;
   }
 }
 
-export default guardarTurno;
+module.exports = { guardarNuevoTurno };
+
+
