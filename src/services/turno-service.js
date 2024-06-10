@@ -1,17 +1,12 @@
-const Turno = require('./turno');
-const TurnoRepository = require('./turno-repositories');
+const turnoRepository = require('../repositories/turno-repositories');
+const { validarTurno } = require('../helpers/validaciones-helpers');
 
-async function guardarNuevoTurno(turnoData) {
-  try {
-    const nuevoTurno = new Turno(...Turno.values(turnoData));
-    const turnoGuardado = await TurnoRepository.guardarTurno(nuevoTurno);
-    return turnoGuardado;
-  } catch (error) {
-    console.error('Error al guardar el nuevo turno:', error);
-    throw error;
-  }
+async function crearTurno(turno) {
+  validarTurno(turno);
+  return await turnoRepository.guardarTurno(turno);
 }
 
-module.exports = { guardarNuevoTurno };
+module.exports = { crearTurno };
+
 
 

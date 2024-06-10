@@ -1,10 +1,14 @@
-const pool = require('./db-configs');
-const Turno = require('./turno');
+const pool = require('../configs/db-configs');
+const Turno = require('../entities/turno');
 
 async function guardarTurno(turno) {
-  const { idMedico, idPaciente, tiempoDeEspera, idArea, turnosPrevios, idEstadoTurno, fechaHora, sintomas } = turno;
-  const query = 'INSERT INTO "Turno" ("IdMedico", "IdPaciente", "TiempoDeEspera", "IdArea", "TurnosPrevios", "IdEstadoTurno", "FechaHora", "Sintomas") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
-  const values = [idMedico, idPaciente, tiempoDeEspera, idArea, turnosPrevios, idEstadoTurno, fechaHora, sintomas];
+  const { IdMedico, IdPaciente, TiempoDeEspera, IdArea, TurnosPrevios, IdEstadoTurno, FechaHora, Sintomas } = turno;
+  const query = `
+  INSERT INTO "Turno" 
+  ("IdMedico", "IdPaciente", "TiempoDeEspera", "IdArea", "TurnosPrevios", "IdEstadoTurno", "FechaHora", "Sintomas") 
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+  RETURNING *`;
+  const values = [IdMedico, IdPaciente, TiempoDeEspera, IdArea, TurnosPrevios, IdEstadoTurno, FechaHora, Sintomas];
 
   try {
     const { rows } = await pool.query(query, values);
@@ -15,4 +19,4 @@ async function guardarTurno(turno) {
   }
 }
 
-export default { guardarTurno };
+module.exports = { guardarTurno };

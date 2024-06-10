@@ -1,9 +1,13 @@
-const config = {
-    host : "localhost",
-    database : "PFBD",
-    user : "postgres",
-    password : "root",
-    port : 5432
-}
+const { Pool } = require('pg');
 
-export default config;
+const config = {
+    host: 'localhost',
+    database: 'postgres',
+    user: 'postgres',
+    password: 'root',
+    port: 5432,
+};
+
+const pool = new Pool(config);
+
+module.exports = pool;

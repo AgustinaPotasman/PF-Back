@@ -1,21 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const { crearTurno } = require('./src/services/turno-service');
 const app = express();
-const port = 3000;
 
 app.use(bodyParser.json());
 
 app.post('/turnos', async (req, res) => {
   try {
-    const nuevoTurno = await guardarNuevoTurno(req.body);
-    res.status(201).json(nuevoTurno);
+    const nuevoTurno = req.body;
+    const resultado = await crearTurno(nuevoTurno);
+    res.status(201).json(resultado);
   } catch (error) {
-    res.status(500).json({ error: 'Error al guardar el turno' });
+    console.error('Error al crear el turno:', error);
+    res.status(400).json({ error: error.message });
   }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor iniciado en http://localhost:${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
