@@ -5,9 +5,10 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.post('/turnos', async (req, res) => {
+app.post('/api/turnos', async (req, res) => {
   try {
     const nuevoTurno = req.body;
+    console.log(nuevoTurno);
     const resultado = await crearTurno(nuevoTurno);
     res.status(201).json(resultado);
   } catch (error) {
@@ -20,3 +21,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+

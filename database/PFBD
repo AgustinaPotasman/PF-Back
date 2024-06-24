@@ -143,7 +143,7 @@ ALTER TABLE public."Paciente" OWNER TO postgres;
 --
 
 CREATE TABLE public."Turno" (
-    "Id" integer NOT NULL,
+    "Id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "idMedico" integer NOT NULL,
     "idPaciente" integer NOT NULL,
     "TiempoDeEspera" time without time zone NOT NULL,
