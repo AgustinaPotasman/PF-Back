@@ -3,7 +3,7 @@ class Area {
       this.Especialidad = Especialidad
     }
   
-    static values(area) {
+    static values() {
       return [
         area.Especialidad
       ];

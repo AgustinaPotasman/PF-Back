@@ -1,17 +1,13 @@
 const pool = require('../configs/db-configs');
-const Area = require('../entities/area');
 
-async function todasLasAreas (area){
-    const {Especialidad} = area;
-    const query = `SELECT * FROM Area`
-    try {
-        const res = await pool.query(query);
-        return res.rows[0];
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    
-}
+const obtenerTodasLasAreas = async () => {
+  try {
+    const res = await pool.query('SELECT "Id", "Especialidad" FROM public."Area"');
+    return res.rows;
+  } catch (error) {
+    console.error('Error al obtener todas las áreas:', error);
+    throw error;
+  }
+};
 
-module.exports = { todasLasAreas };
+module.exports = { obtenerTodasLasAreas };

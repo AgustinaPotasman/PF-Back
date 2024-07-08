@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { crearTurno } = require('./src/services/turno-service');
-const { todasLasAreas } = require('./src/repositories/area-repositories');
+const { especialidades } = require('./src/services/area-service');
 const app = express();
 const areaService = require('./src/services/area-service');
 
@@ -21,12 +21,14 @@ app.post('/api/turnos', async (req, res) => {
 
 app.get('/api/areas', async (req, res) => {
   try {
-    const areas = await areaService.todasLasAreas();
+    const areas = await areaService.obtenerEspecialidades();
     res.status(200).json(areas);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error al obtener las áreas:', error);
+    res.status(500).json({ error: 'Error interno' });
   }
 });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

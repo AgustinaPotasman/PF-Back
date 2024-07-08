@@ -1,7 +1,12 @@
 const areaRepository = require('../repositories/area-repositories');
 
-async function especialidades(area) {
-    return await areaRepository.todasLasTareas(area);
+const obtenerEspecialidades = async () => {
+  try {
+    return await areaRepository.obtenerTodasLasAreas();
+  } catch (error) {
+    console.error('Error al obtener especialidades:', error);
+    throw error;
   }
-  
-  module.exports = { especialidades };
+};
+
+module.exports = { obtenerEspecialidades };
