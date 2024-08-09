@@ -2,7 +2,7 @@ const pool = require('../configs/db-configs');
 
 const obtenerTodasLasAreas = async () => {
   try {
-    const res = await pool.query('SELECT "Id", "Especialidad", "TiempoEspera", "IdMedico" FROM public."Area"');
+    const res = await pool.query('SELECT "Id", "Especialidad", "TiempoEspera", "idMedico" FROM public."Area"');
     return res.rows;
   } catch (error) {
     console.error('Error al obtener todas las áreas:', error);

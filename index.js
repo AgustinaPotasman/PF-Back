@@ -5,11 +5,13 @@ const { especialidades } = require('./src/services/area-service');
 const areaService = require('./src/services/area-service');
 const TEService = require('./src/services/tiempoEspera-service')
 const listaEsperaService = require('./src/services/listaEspera-service');
+const ETService = require('./src/services/actualizarET-service')
 const cors = require('cors');
 const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
 app.post('/api/turnos', async (req, res) => {
   try {
@@ -52,6 +54,28 @@ app.get('/api/listaEspera/:idArea', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener la lista de espera', message: error.message });
   }
 });
+
+app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
+  const { idTurno } = req.params; // Esto lo tomas de la URL
+  const { nuevoEstadoId } = req.body; // Esto lo tomas del cuerpo de la solicitud
+
+  try {
+    console.log("ID del turno:", idTurno);
+    console.log("Nuevo estado ID:", nuevoEstadoId);
+
+    const success = await ETService.actualizarEstadoTurno(idTurno, nuevoEstadoId);
+
+    if (success) {
+      res.json({ success: true });
+    } else {
+      res.status(400).json({ success: false, message: 'No se pudo actualizar el estado del turno' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar el estado del turno', message: error.message });
+  }
+});
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

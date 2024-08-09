@@ -23,7 +23,6 @@ SET row_security = off;
 -- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
 --
 
-CREATE SCHEMA public;
 
 
 ALTER SCHEMA public OWNER TO pg_database_owner;
@@ -65,7 +64,8 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public."Area" (
     "Id" integer NOT NULL,
-    "Especialidad" text NOT NULL
+    "Especialidad" text NOT NULL,
+    "TiempoEspera" integer NOT NULL
 );
 
 
@@ -104,7 +104,7 @@ ALTER TABLE public."EstadoTurno" OWNER TO postgres;
 --
 
 CREATE TABLE public."Medico" (
-    "Id" integer NOT NULL,
+   "Id" integer NOT NULL,
     "Nombre" character varying NOT NULL,
     "Apellido" character varying NOT NULL,
     "DNI" text NOT NULL,
@@ -123,7 +123,7 @@ ALTER TABLE public."Medico" OWNER TO postgres;
 --
 
 CREATE TABLE public."Paciente" (
-    "Id" integer NOT NULL,
+   "Id" integer NOT NULL,
     "Nombre" character varying NOT NULL,
     "Apellido" character varying NOT NULL,
     "DNI" text NOT NULL,
@@ -143,10 +143,9 @@ ALTER TABLE public."Paciente" OWNER TO postgres;
 --
 
 CREATE TABLE public."Turno" (
-    "Id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    "idMedico" integer NOT NULL,
+    "Id" integer NOT NULL,
+    "idMedico" integer,
     "idPaciente" integer NOT NULL,
-    "TiempoDeEspera" time without time zone NOT NULL,
     "idArea" integer NOT NULL,
     "TurnosPrevios" integer NOT NULL,
     "idEstadoTurno" integer NOT NULL,
@@ -264,4 +263,3 @@ ALTER TABLE ONLY public."Turno"
 --
 -- PostgreSQL database dump complete
 --
-

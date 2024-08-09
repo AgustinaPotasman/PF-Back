@@ -1,5 +1,6 @@
 class Turno {
-    constructor(idMedico, idPaciente, TiempoDeEspera, idArea, TurnosPrevios, idEstadoTurno, FechaHora, Sintomas) {
+    constructor(Id, idMedico, idPaciente, TiempoDeEspera, idArea, TurnosPrevios, idEstadoTurno, FechaHora, Sintomas) {
+      this.Id = Id;
       this.idMedico = idMedico;
       this.idPaciente = idPaciente;
       this.TiempoDeEspera = TiempoDeEspera;
@@ -12,6 +13,7 @@ class Turno {
   
     static values(turno) {
       return [
+        turno.idTurno,
         turno.idMedico,
         turno.idPaciente,
         turno.TiempoDeEspera,
