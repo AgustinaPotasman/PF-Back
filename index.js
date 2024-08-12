@@ -6,6 +6,7 @@ const areaService = require('./src/services/area-service');
 const TEService = require('./src/services/tiempoEspera-service')
 const listaEsperaService = require('./src/services/listaEspera-service');
 const ETService = require('./src/services/actualizarET-service')
+const CPService = require('./src/services/cantPersonas-service')
 const cors = require('cors');
 const app = express();
 
@@ -35,14 +36,37 @@ app.get('/api/areas', async (req, res) => {
   }
 });
 
-app.get('/api/tiempoEspera', async (req, res) => {
+app.get('/api/tiempoEspera/:idArea', async (req, res) => {
+  const { idArea } = req.params;
   try {
-    const TE = await TEService.obtenerTiempoDeEspera();
+    const TE = await TEService.obtenerTiempoDeEspera(idArea);
     res.status(200).json(TE);
   } catch (error) {
     console.error('Error al obtener el tiempo de espera:', error);
     res.status(500).json({ error: 'Error interno' });
   }
+});
+
+
+app.get('/api/cantidadPersonas/:idArea', async (req, res) => {
+  try {
+    const idArea = parseInt(req.params.idArea, 10);
+
+    if (isNaN(idArea)) {
+        return res.status(400).json({ error: 'idArea no es válido.' });
+    }
+
+    const cantidadPersonas = await CPService.contarPersonasEnArea(idArea);
+
+    if (isNaN(cantidadPersonas) || cantidadPersonas < 1) {
+        return res.status(400).json({ error: 'Cantidad de personas no es válida o es menor que 1.' });
+    }
+
+    res.json({ cantidadPersonas });
+} catch (error) {
+    console.error('Error en /api/cantidadPersonas:', error.message);
+    res.status(500).json({ error: 'Error al obtener la cantidad de personas en el área.' });
+}
 });
 
 app.get('/api/listaEspera/:idArea', async (req, res) => {

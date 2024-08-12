@@ -1,11 +1,15 @@
 class Area {
     constructor(Especialidad) {
-      this.Especialidad = Especialidad
+      this.Id = Id,
+      this.Especialidad = Especialidad,
+      this.TiempoEspera = this.TiempoEspera
     }
   
     static values() {
       return [
-        area.Especialidad
+        area.Id,
+        area.Especialidad,
+        atea.TiempoEspera
       ];
     }
     
