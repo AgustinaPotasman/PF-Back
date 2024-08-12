@@ -7,7 +7,7 @@ const obtenerListaEsperaPorArea = async (idArea) => {
       FROM public."Turno" t
       INNER JOIN public."Paciente" p ON t."idPaciente" = p."Id"
       INNER JOIN public."Area" a ON t."idArea" = a."Id"
-      WHERE t."idArea" = $1
+      WHERE t."idArea" = $1 AND t."idEstadoTurno" = 1
     `, [idArea]);
     return res.rows;
   } catch (error) {

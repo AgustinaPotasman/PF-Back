@@ -7,6 +7,7 @@ const TEService = require('./src/services/tiempoEspera-service')
 const listaEsperaService = require('./src/services/listaEspera-service');
 const ETService = require('./src/services/actualizarET-service')
 const CPService = require('./src/services/cantPersonas-service')
+const ITService = require('./src/services/insertarTurno-service')
 const cors = require('cors');
 const app = express();
 
@@ -80,8 +81,8 @@ app.get('/api/listaEspera/:idArea', async (req, res) => {
 });
 
 app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
-  const { idTurno } = req.params; // Esto lo tomas de la URL
-  const { nuevoEstadoId } = req.body; // Esto lo tomas del cuerpo de la solicitud
+  const { idTurno } = req.params; 
+  const { nuevoEstadoId } = req.body; 
 
   try {
     console.log("ID del turno:", idTurno);
@@ -98,6 +99,16 @@ app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar el estado del turno', message: error.message });
   }
 });
+
+app.post('/api/insertarTurno', async (req, res) => {
+  const { idMedico, idPaciente, idArea, idEstadoTurno, FechaHora, Sintomas } = req.body;
+  try {
+    const turnoNuevo = await ITService.insertTurno(idMedico, idPaciente, idArea, idEstadoTurno, FechaHora, Sintomas)
+    res.json(turnoNuevo);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al crear un turno', message: error.message });
+  }
+})
 
 
 
