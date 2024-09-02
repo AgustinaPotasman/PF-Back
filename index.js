@@ -103,12 +103,12 @@ app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
 app.post('/api/insertarTurno', async (req, res) => {
   const { idMedico, idPaciente, idArea, idEstadoTurno, FechaHora, Sintomas } = req.body;
   try {
-    const turnoNuevo = await ITService.insertTurno(idMedico, idPaciente, idArea, idEstadoTurno, FechaHora, Sintomas)
+    const turnoNuevo = await ITService.insertTurno(idMedico, idPaciente, idArea, idEstadoTurno, FechaHora, Sintomas);
     res.json(turnoNuevo);
   } catch (error) {
     res.status(500).json({ error: 'Error al crear un turno', message: error.message });
   }
-})
+});
 
 
 
