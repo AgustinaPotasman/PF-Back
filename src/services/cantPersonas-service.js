@@ -10,3 +10,4 @@ const contarPersonasEnArea = async (idArea) => {
   }
 
   module.exports = { contarPersonasEnArea };
+
