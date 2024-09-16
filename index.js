@@ -8,6 +8,7 @@ const listaEsperaService = require('./src/services/listaEspera-service');
 const ETService = require('./src/services/actualizarET-service')
 const CPService = require('./src/services/cantPersonas-service')
 const ITService = require('./src/services/insertarTurno-service')
+const BTService = require('./src/services/borrarTurno-service')
 const cors = require('cors');
 const app = express();
 
@@ -85,9 +86,6 @@ app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
   const { nuevoEstadoId } = req.body; 
 
   try {
-    console.log("ID del turno:", idTurno);
-    console.log("Nuevo estado ID:", nuevoEstadoId);
-
     const success = await ETService.actualizarEstadoTurno(idTurno, nuevoEstadoId);
 
     if (success) {
@@ -109,6 +107,23 @@ app.post('/api/insertarTurno', async (req, res) => {
     res.status(500).json({ error: 'Error al crear un turno', message: error.message });
   }
 });
+
+app.delete('/api/borrarTurno/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await BTService.cancelarTurno(id);
+    if (result.rowCount === 0) {
+      // Si no se encontró el turno para eliminar
+      res.status(404).json({ error: 'Turno no encontrado' });
+    } else {
+      res.status(200).json({ message: 'Turno cancelado exitosamente.' });
+    }
+  } catch (error) {
+    console.error('Error al cancelar el turno:', error.message); // Log para depuración
+    res.status(500).json({ error: 'Error al cancelar el turno', message: error.message });
+  }
+});
+
 
 
 
