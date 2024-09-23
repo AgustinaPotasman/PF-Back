@@ -113,13 +113,12 @@ app.delete('/api/borrarTurno/:id', async (req, res) => {
   try {
     const result = await BTService.cancelarTurno(id);
     if (result.rowCount === 0) {
-      // Si no se encontró el turno para eliminar
       res.status(404).json({ error: 'Turno no encontrado' });
     } else {
       res.status(200).json({ message: 'Turno cancelado exitosamente.' });
     }
   } catch (error) {
-    console.error('Error al cancelar el turno:', error.message); // Log para depuración
+    console.error('Error al cancelar el turno:', error.message); 
     res.status(500).json({ error: 'Error al cancelar el turno', message: error.message });
   }
 });
