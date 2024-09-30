@@ -9,6 +9,7 @@ const ETService = require('./src/services/actualizarET-service')
 const CPService = require('./src/services/cantPersonas-service')
 const ITService = require('./src/services/insertarTurno-service')
 const BTService = require('./src/services/borrarTurno-service')
+const UTService = require('./src/services/unTurno-service')
 const cors = require('cors');
 const app = express();
 
@@ -120,6 +121,21 @@ app.delete('/api/borrarTurno/:id', async (req, res) => {
   } catch (error) {
     console.error('Error al cancelar el turno:', error.message); 
     res.status(500).json({ error: 'Error al cancelar el turno', message: error.message });
+  }
+});
+
+
+app.get('/api/unTurno/:id', async (req, res) => {
+  const { id } = req.params;
+  try{
+    const result = await UTService.getUnTurno(id);
+    if (result) {
+      res.json(result);
+    } else {
+      res.status(400).json({ success: false, message: 'No se pudo conseguir' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener', message: error.message });
   }
 });
 
