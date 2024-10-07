@@ -11,7 +11,11 @@ const ITService = require('./src/services/insertarTurno-service')
 const BTService = require('./src/services/borrarTurno-service')
 const UTService = require('./src/services/unTurno-service')
 const cors = require('cors');
+
 const app = express();
+const router = express.Router();
+const userRouter = express.Router();
+
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -139,8 +143,16 @@ app.get('/api/unTurno/:id', async (req, res) => {
   }
 });
 
-
-
+app.post('/api/register', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const nuevoUsuario = await userService.registerUser(username, password);
+    res.status(201).json({ message: 'Registro exitoso', usuario: nuevoUsuario });
+  } catch (error) {
+    console.error('Error en el registro:', error);  // Imprime detalles del error
+    res.status(500).json({ error: 'Error en el registro. Inténtalo nuevamente.', details: error.message });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
