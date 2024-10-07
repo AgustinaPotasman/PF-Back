@@ -5,7 +5,7 @@ const contarPersonasEnArea = async (idArea) => {
         const res = await pool.query(
             `SELECT COUNT(*) AS cantidadPersonas
             FROM public."Turno"
-            WHERE "idArea" = $1`, [idArea]);
+            WHERE "idArea" = $1 AND "idEstadoTurno" IN (1, 2)`, [idArea]);
 
         if (res.rows.length > 0) {
             let cantidadPersonas = parseInt(res.rows[0].cantidadpersonas, 10);
@@ -19,7 +19,4 @@ const contarPersonasEnArea = async (idArea) => {
     }
 };
 
-
-      
-
-  module.exports = { contarPersonasEnArea }; 
+module.exports = { contarPersonasEnArea };

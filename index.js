@@ -54,6 +54,7 @@ app.get('/api/tiempoEspera/:idArea', async (req, res) => {
 app.get('/api/cantidadPersonas/:idArea', async (req, res) => {
   try {
     const idArea = parseInt(req.params.idArea, 10);
+   
 
     if (isNaN(idArea)) {
         return res.status(400).json({ error: 'idArea no es válido.' });
@@ -85,19 +86,28 @@ app.get('/api/listaEspera/:idArea', async (req, res) => {
 app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
   const { idTurno } = req.params; 
   const { nuevoEstadoId } = req.body; 
+  console.log("entre", idTurno, nuevoEstadoId);
+
+  if (isNaN(idTurno) || isNaN(nuevoEstadoId)) {
+      return res.status(400).json({ success: false, message: 'ID Turno o nuevo estado no son números válidos' });
+  }
+
+  console.log(`ID Turno: ${idTurno}, Nuevo Estado: ${nuevoEstadoId}`);
 
   try {
-    const success = await ETService.actualizarEstadoTurno(idTurno, nuevoEstadoId);
+      const success = await ETService.actualizarEstadoTurno(Number(idTurno), Number(nuevoEstadoId));
 
-    if (success) {
-      res.json({ success: true });
-    } else {
-      res.status(400).json({ success: false, message: 'No se pudo actualizar el estado del turno' });
-    }
+      if (success) {
+          res.json({ success: true });
+      } else {
+          res.status(400).json({ success: false, message: 'No se pudo actualizar el estado del turno' });
+      }
   } catch (error) {
-    res.status(500).json({ error: 'Error al actualizar el estado del turno', message: error.message });
+      console.error('Error al actualizar el estado del turno:', error);
+      res.status(500).json({ success: false, error: 'Error al actualizar el estado del turno', message: error.message });
   }
 });
+
 
 app.post('/api/insertarTurno', async (req, res) => {
   const { idMedico, idPaciente, idArea, idEstadoTurno, Sintomas } = req.body;
@@ -136,6 +146,26 @@ app.get('/api/unTurno/:id', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener', message: error.message });
+  }
+});
+
+app.get('/api/obtenerPaciente/:id',  async (req, res) => {
+  const { idTurno } = req.params;
+
+  if (isNaN(idTurno)) {
+    return res.status(400).json({ success: false, message: 'ID Turno no es un número válido' });
+  }
+
+  try {
+    const paciente = await ETService.obtenerPaciente(Number(idTurno));
+    if (paciente) {
+      res.json({ success: true, data: paciente });
+    } else {
+      res.status(404).json({ success: false, message: 'Paciente no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al obtener paciente:', error);
+    res.status(500).json({ success: false, message: 'Error al obtener paciente' });
   }
 });
 
