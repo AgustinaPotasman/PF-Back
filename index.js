@@ -113,6 +113,7 @@ app.put('/api/actualizarEstadoTurno/:idTurno', async (req, res) => {
 });
 
 
+
 app.post('/api/insertarTurno', async (req, res) => {
   const { idMedico, idPaciente, idArea, idEstadoTurno, Sintomas } = req.body;
   try {
@@ -139,21 +140,21 @@ app.delete('/api/borrarTurno/:id', async (req, res) => {
 });
 
 
-app.get('/api/unTurno/:id', async (req, res) => {
-  const { id } = req.params;
-  try{
-    const result = await UTService.getUnTurno(id);
+app.get('/api/paciente/:idTurno', async (req, res) => {
+  const { idTurno } = req.params;
+  try {
+    const result = await UTService.getPacientePorTurno(idTurno);
     if (result) {
       res.json(result);
     } else {
-      res.status(400).json({ success: false, message: 'No se pudo conseguir' });
+      res.status(404).json({ success: false, message: 'Paciente no encontrado' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener', message: error.message });
+    res.status(500).json({ error: 'Error al obtener el paciente', message: error.message });
   }
 });
 
-<<<<<<< HEAD
+
 app.get('/api/obtenerPaciente/:id',  async (req, res) => {
   const { idTurno } = req.params;
 
@@ -176,7 +177,7 @@ app.get('/api/obtenerPaciente/:id',  async (req, res) => {
 
 
 
-=======
+
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -187,7 +188,7 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ error: 'Error en el registro. Inténtalo nuevamente.', details: error.message });
   }
 });
->>>>>>> 3f95a982d983052efa69c273ed77edc3e4854183
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
