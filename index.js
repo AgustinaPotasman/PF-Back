@@ -140,10 +140,10 @@ app.delete('/api/borrarTurno/:id', async (req, res) => {
 });
 
 
-app.get('/api/paciente/:idTurno', async (req, res) => {
+app.get('/api/unTurno/:idTurno', async (req, res) => {
   const { idTurno } = req.params;
   try {
-    const result = await UTService.getPacientePorTurno(idTurno);
+    const result = await UTService.getUnTurno(idTurno);
     if (result) {
       res.json(result);
     } else {
@@ -184,7 +184,7 @@ app.post('/api/register', async (req, res) => {
     const nuevoUsuario = await userService.registerUser(username, password);
     res.status(201).json({ message: 'Registro exitoso', usuario: nuevoUsuario });
   } catch (error) {
-    console.error('Error en el registro:', error);  // Imprime detalles del error
+    console.error('Error en el registro:', error);  
     res.status(500).json({ error: 'Error en el registro. Inténtalo nuevamente.', details: error.message });
   }
 });
