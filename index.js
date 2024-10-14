@@ -55,27 +55,29 @@ app.get('/api/tiempoEspera/:idArea', async (req, res) => {
 });
 
 
-app.get('/api/cantidadPersonas/:idArea', async (req, res) => {
+app.get('/api/cantidadPersonas/:idArea/:id', async (req, res) => {
   try {
     const idArea = parseInt(req.params.idArea, 10);
-   
+    const Id = parseInt(req.params.id, 10);
 
     if (isNaN(idArea)) {
-        return res.status(400).json({ error: 'idArea no es válido.' });
+      return res.status(400).json({ error: 'idArea no es válido.' });
     }
 
-    const cantidadPersonas = await CPService.contarPersonasEnArea(idArea);
+    const cantidadPersonas = await CPService.contarPersonasEnArea(idArea, Id);
 
     if (isNaN(cantidadPersonas) || cantidadPersonas < 1) {
-        return res.status(400).json({ error: 'Cantidad de personas no es válida o es menor que 1.' });
+      return res.status(400).json({ error: 'Cantidad de personas no es válida o es menor que 1.' });
     }
 
     res.json({ cantidadPersonas });
-} catch (error) {
-    console.error('Error en /api/cantidadPersonas:', error.message);
-    res.status(500).json({ error: 'Error al obtener la cantidad de personas en el área.' });
-}
+  } catch (error) {
+    console.error('Error en /api/cantidadPersonas:', error); 
+    res.status(500).json({ error: 'Error al obtener la cantidad de personas en el área.', details: error.message });
+  }
 });
+
+
 
 app.get('/api/listaEspera/:idArea', async (req, res) => {
   const { idArea } = req.params;
