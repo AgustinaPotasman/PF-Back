@@ -3,24 +3,23 @@ const bodyParser = require('body-parser');
 const { crearTurno } = require('./src/services/turno-service');
 const { especialidades } = require('./src/services/area-service');
 const areaService = require('./src/services/area-service');
-const TEService = require('./src/services/tiempoEspera-service')
+const TEService = require('./src/services/tiempoEspera-service');
 const listaEsperaService = require('./src/services/listaEspera-service');
-const ETService = require('./src/services/actualizarET-service')
-const CPService = require('./src/services/cantPersonas-service')
-const ITService = require('./src/services/insertarTurno-service')
-const BTService = require('./src/services/borrarTurno-service')
-const UTService = require('./src/services/unTurno-service')
+const ETService = require('./src/services/actualizarET-service');
+const CPService = require('./src/services/cantPersonas-service');
+const ITService = require('./src/services/insertarTurno-service');
+const BTService = require('./src/services/borrarTurno-service');
+const UTService = require('./src/services/unTurno-service');
+const PatientsService = require('./src/services/pacientes-service');
+const UserRouter = require('./src/controllers/pacientes-controllers'); // Asegúrate de que la ruta sea correcta
 const cors = require('cors');
-
 const app = express();
-const router = express.Router();
-const userRouter = express.Router();
 
 
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/api/user', UserRouter);
 app.post('/api/turnos', async (req, res) => {
   try {
     const nuevoTurno = req.body;
@@ -181,13 +180,24 @@ app.get('/api/obtenerPaciente/:id',  async (req, res) => {
 
 
 app.post('/api/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { nombre, apellido, DNI, gmail, obra_social, contrasena, telefono } = req.body;
+
+  // Verifica que los campos necesarios están presentes
+  if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+  }
+
   try {
-    const nuevoUsuario = await userService.registerUser(username, password);
-    res.status(201).json({ message: 'Registro exitoso', usuario: nuevoUsuario });
+    const newPatient = await svc.crearPaciente({ nombre, apellido, DNI, gmail, obra_social, contrasena, telefono });
+    if (!newPatient) {
+      return res.status(400).json({ message: 'Error al registrar el paciente.' });
+    }
+
+    const token = jwt.sign({ DNI }, JWT_SECRET, { expiresIn: '365d' });
+    res.status(201).json({ message: 'Paciente registrado exitosamente', newPatient, token });
   } catch (error) {
-    console.error('Error en el registro:', error);  
-    res.status(500).json({ error: 'Error en el registro. Inténtalo nuevamente.', details: error.message });
+    console.error('Error durante el registro:', error);
+    res.status(500).json({ message: error.message });
   }
 });
 
