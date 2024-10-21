@@ -66,8 +66,8 @@ app.get('/api/cantidadPersonas/:idArea/:id', async (req, res) => {
 
     const cantidadPersonas = await CPService.contarPersonasEnArea(idArea, Id);
 
-    if (isNaN(cantidadPersonas) || cantidadPersonas < 1) {
-      return res.status(400).json({ error: 'Cantidad de personas no es válida o es menor que 1.' });
+    if (isNaN(cantidadPersonas) || cantidadPersonas < 0) {
+      return res.status(400).json({ error: 'Cantidad de personas no es válida o es menor que 0.' });
     }
 
     res.json({ cantidadPersonas });

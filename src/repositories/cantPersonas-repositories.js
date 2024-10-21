@@ -10,7 +10,7 @@ const contarPersonasEnArea = async (idArea, Id) => {
             [idArea, Id]
         );
 
-        if (res.rows.length > 0) {
+        if (res.rows.length >= 0) {
             let cantidadPersonas = parseInt(res.rows[0].cantidadpersonas, 10);
             return cantidadPersonas;
         } else {
