@@ -11,9 +11,18 @@ const ITService = require('./src/services/insertarTurno-service');
 const BTService = require('./src/services/borrarTurno-service');
 const UTService = require('./src/services/unTurno-service');
 const PatientService = require('./src/services/paciente-service');
-const UserRouter = require('./src/controllers/pacientes-controllers'); // Asegúrate de que la ruta sea correcta
+//const UserRouter = require('./src/controllers/pacientes-controllers'); 
+const { Router } = express;
+const PatientsService = require('./src/services/pacientes-service'); 
+const jwt = require('jsonwebtoken');
+const { authenticateToken } = require('./src/middlewares/auth-middleware');
+const pool = require('./src/configs/db-configs');
+const UserRouter = Router();
+const svc = new PatientsService();
+const JWT_SECRET = 'your_jwt_secret';
 const cors = require('cors');
 const app = express();
+
 
 
 app.use(bodyParser.json());
@@ -32,7 +41,7 @@ app.post('/api/turnos', async (req, res) => {
   }
 });
 
-app.get('/api/areas', async (req, res) => {
+app.get('/api/areas', authenticateToken, async (req, res) => {
   try {
     const areas = await areaService.obtenerEspecialidades();
     res.status(200).json(areas);
@@ -156,7 +165,7 @@ app.get('/api/unTurno/:idTurno', async (req, res) => {
 });
 
 
-app.get('/api/obtenerPaciente/:id',  async (req, res) => {
+/*app.get('/api/obtenerPaciente/:id',  async (req, res) => {
   const { idTurno } = req.params;
 
   if (isNaN(idTurno)) {
@@ -185,7 +194,6 @@ app.post('/api/register', async (req, res) => {
   if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
   }
-
   try {
     const newPatient = await svc.crearPaciente({ nombre, apellido, DNI, gmail, obra_social, contrasena, telefono });
     if (!newPatient) {
@@ -198,7 +206,120 @@ app.post('/api/register', async (req, res) => {
     console.error('Error durante el registro:', error);
     res.status(500).json({ message: error.message });
   }
+});*/
+
+UserRouter.post('/register', async (req, res) => {
+  const { nombre, apellido, DNI, gmail, obra_social, contrasena, telefono } = req.body;
+
+  console.log('Datos recibidos:', req.body); // Para ver los datos entrantes
+
+  // Validación de campos obligatorios
+  if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
+      console.error('Faltan campos obligatorios para registrar al paciente.');
+      return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+  }
+
+  // Validación de longitud de contraseña
+  if (contrasena.length < 3) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 3 caracteres.' });
+  }
+
+  try {
+      const newPatient = await svc.crearPaciente(nombre, apellido, DNI, gmail, obra_social, contrasena, telefono);
+      
+      // Verifica si el registro fue exitoso
+      if (!newPatient) {
+          return res.status(400).json({ message: 'Error al registrar el paciente.' });
+      }
+
+      const token = jwt.sign({ DNI }, JWT_SECRET, { expiresIn: '365d' });
+      res.status(201).json({ message: 'Paciente registrado exitosamente', token });
+  } catch (error) {
+      console.error('Error durante el registro:', error);
+      res.status(500).json({ message: 'Error en el registro. Inténtalo nuevamente.' });
+  }
+
 });
+
+
+app.post('/api/user/login', async (req, res) => {
+  try {
+      const { dni, contrasena } = req.body;
+      console.log('Intentando iniciar sesión con:', { dni, contrasena });
+
+      const patient = await svc.login(dni, contrasena);
+
+      console.log("En index.js, el patient devolvió: " + patient)
+      if (!patient) {
+          return res.status(401).json({ message: 'Credenciales inválidas' });
+      }
+
+      const token = jwt.sign({ id: patient.id }, JWT_SECRET, { expiresIn: '365d' });
+      res.status(200).json({ patient, token }); // Devuelve el usuario y el token
+  } catch (error) {
+      console.error('Error durante el inicio de sesión:', error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+// Nuevas rutas protegidas
+UserRouter.get('/all', authenticateToken, async (req, res) => {
+  try {
+      const patients = await svc.getAllPatients();
+      res.status(200).json(patients);
+  } catch (error) {
+      console.error('Error al obtener pacientes:', error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+UserRouter.get('/:DNI', authenticateToken, async (req, res) => {
+  try {
+      const patient = await svc.getPatientByDNI(req.params.DNI);
+      if (!patient) {
+          return res.status(404).json({ message: 'Paciente no encontrado' });
+      }
+      res.status(200).json(patient);
+  } catch (error) {
+      console.error('Error al obtener paciente:', error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+UserRouter.put('/:DNI', authenticateToken, async (req, res) => {
+  const { nombre, apellido, gmail, obra_social, telefono } = req.body;
+  try {
+      const updatedPatient = await svc.updatePatient(req.params.DNI, { nombre, apellido, gmail, obra_social, telefono });
+      if (!updatedPatient) {
+          return res.status(404).json({ message: 'Paciente no encontrado o no se pudo actualizar' });
+      }
+      res.status(200).json({ message: 'Paciente actualizado exitosamente', patient: updatedPatient });
+  } catch (error) {
+      console.error('Error al actualizar paciente:', error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+UserRouter.delete('/:DNI', authenticateToken, async (req, res) => {
+  try {
+      const deleted = await svc.deletePatient(req.params.DNI);
+      if (!deleted) {
+          return res.status(404).json({ message: 'Paciente no encontrado o no se pudo eliminar' });
+      }
+      res.status(200).json({ message: 'Paciente eliminado exitosamente' });
+  } catch (error) {
+      console.error('Error al eliminar paciente:', error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+module.exports = UserRouter;
+
 
 
 const PORT = process.env.PORT || 3000;

@@ -11,27 +11,36 @@ const JWT_SECRET = 'your_jwt_secret';
 UserRouter.post('/register', async (req, res) => {
     const { nombre, apellido, DNI, gmail, obra_social, contrasena, telefono } = req.body;
 
+    console.log('Datos recibidos:', req.body); // Para ver los datos entrantes
+
+    // Validación de campos obligatorios
     if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
+        console.error('Faltan campos obligatorios para registrar al paciente.');
         return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
 
+    // Validación de longitud de contraseña
     if (contrasena.length < 3) {
         return res.status(400).json({ message: 'La contraseña debe tener al menos 3 caracteres.' });
     }
 
     try {
         const newPatient = await svc.crearPaciente(nombre, apellido, DNI, gmail, obra_social, contrasena, telefono);
+        
+        // Verifica si el registro fue exitoso
         if (!newPatient) {
-            return res.status(400).json({ message: 'Error al registrar el paciente. Verifique si el DNI o el email ya están en uso.' });
+            return res.status(400).json({ message: 'Error al registrar el paciente.' });
         }
 
         const token = jwt.sign({ DNI }, JWT_SECRET, { expiresIn: '365d' });
         res.status(201).json({ message: 'Paciente registrado exitosamente', token });
     } catch (error) {
         console.error('Error durante el registro:', error);
-        res.status(500).json({ message: 'Error en el registro. Inténtalo nuevamente.', details: error.message });
+        res.status(500).json({ message: 'Error en el registro. Inténtalo nuevamente.' });
     }
+
 });
+
 
 UserRouter.post('/login', async (req, res) => {
     const { DNI, contrasena } = req.body;
