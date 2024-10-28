@@ -14,7 +14,7 @@ const PatientsService = require('./src/services/pacientes-service');
 const UserRouter = require('./src/controllers/pacientes-controllers'); // Asegúrate de que la ruta sea correcta
 const cors = require('cors');
 const app = express();
-
+const svc = new PatientsService();
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -186,7 +186,6 @@ app.post('/api/register', async (req, res) => {
   if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
   }
-
   try {
     const newPatient = await svc.crearPaciente({ nombre, apellido, DNI, gmail, obra_social, contrasena, telefono });
     if (!newPatient) {
