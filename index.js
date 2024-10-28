@@ -10,7 +10,7 @@ const CPService = require('./src/services/cantPersonas-service');
 const ITService = require('./src/services/insertarTurno-service');
 const BTService = require('./src/services/borrarTurno-service');
 const UTService = require('./src/services/unTurno-service');
-const PatientsService = require('./src/services/pacientes-service');
+const PatientService = require('./src/services/paciente-service');
 const UserRouter = require('./src/controllers/pacientes-controllers'); // Asegúrate de que la ruta sea correcta
 const cors = require('cors');
 const app = express();
@@ -164,7 +164,7 @@ app.get('/api/obtenerPaciente/:id',  async (req, res) => {
   }
 
   try {
-    const paciente = await ETService.obtenerPaciente(Number(idTurno));
+    const paciente = await PatientService.obtenerPaciente(Number(idTurno));
     if (paciente) {
       res.json({ success: true, data: paciente });
     } else {
@@ -182,7 +182,6 @@ app.get('/api/obtenerPaciente/:id',  async (req, res) => {
 app.post('/api/register', async (req, res) => {
   const { nombre, apellido, DNI, gmail, obra_social, contrasena, telefono } = req.body;
 
-  // Verifica que los campos necesarios están presentes
   if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
   }
