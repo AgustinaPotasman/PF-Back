@@ -1,5 +1,5 @@
 const pool = require('../configs/db-configs');
-const PatientRepository = require('../repositories/paciente-repositories'); 
+const PatientRepository = require('../repositories/pacientes-repositories'); 
 
 class PatientsService {
     constructor() {
@@ -10,9 +10,10 @@ class PatientsService {
         return this.repos.login(DNI, contrasena); 
     }
 
-    crearPaciente = async ({ nombre, apellido, DNI, gmail, obra_social, contrasena, telefono }) => {
-        return this.repos.crearPaciente(nombre, apellido, DNI, gmail, obra_social, contrasena, telefono);
+    crearPaciente = async ({ nombre, apellido, DNI, gmail, obra_social, contrasena, telefono, foto }) => {
+        return this.repos.crearPaciente(nombre, apellido, DNI, gmail, obra_social, contrasena, telefono, foto);
     }
+    
 }
 
 
