@@ -13,30 +13,34 @@ class PatientRepository {
             `;
     
             await client.query(query, [nombre, apellido, dni, gmail, obra_social, hashedPassword, telefono, foto]);
-            return true; // Indicate success
+            return true; 
         } catch (error) {
-            console.error('Error al crear usuario:', error.message); // Log the error
-            return error.message; // Return the error message for further insight
+            console.error('Error al crear usuario:', error.message); 
+            return error.message; 
         } finally {
             client.release();
         }
     }
-    
 
     async login(DNI, contrasena) {
         const client = await pool.connect();
         try {
-            const query = `
-                SELECT * FROM public."Paciente" 
-                WHERE "DNI" = $1
-            `;
+            console.log('Datos recibidos:', { DNI, contrasena }); 
+            console.log(`Buscando paciente con DNI: ${DNI}`);
+            const query = `SELECT * FROM public."Paciente" WHERE "DNI" = $1`;
             const result = await client.query(query, [DNI]);
             const patient = result.rows[0];
-
-            if (patient && await bcrypt.compare(contrasena, patient.contraseña)) {
-                return patient;
+            console.log('Resultado de la consulta:', patient);
+            
+            if (patient && patient['Contraseña'] === contrasena) {
+                return patient; 
             }
-            return null;
+    
+            if (patient && await bcrypt.compare(contrasena, patient['Contraseña'])) {
+                 return patient; 
+            }
+            
+            return null; 
         } catch (error) {
             console.error('Error durante el inicio de sesión:', error);
             throw error;
@@ -44,6 +48,10 @@ class PatientRepository {
             client.release();
         }
     }
+    
+    
+
 }
+
 
 module.exports = PatientRepository;

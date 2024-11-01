@@ -7,6 +7,7 @@ class PatientsService {
     }
 
     login = async (DNI, contrasena) => {
+        console.log("estoy en el service", DNI, contrasena)
         return this.repos.login(DNI, contrasena); 
     }
 

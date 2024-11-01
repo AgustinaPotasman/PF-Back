@@ -18,7 +18,7 @@ SET row_security = off;
 -- TOC entry 5 (class 2615 OID 2200)
 -- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
 --
-CREATE SCHEMA public;
+--CREATE SCHEMA public;
 ALTER SCHEMA public OWNER TO pg_database_owner;
 --
 -- TOC entry 4825 (class 0 OID 0)

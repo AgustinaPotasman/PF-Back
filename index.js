@@ -40,7 +40,7 @@ app.post('/api/turnos', async (req, res) => {
   }
 });
 
-app.get('/api/areas', authenticateToken, async (req, res) => {
+app.get('/api/areas', async (req, res) => {
   try {
     const areas = await areaService.obtenerEspecialidades();
     res.status(200).json(areas);
@@ -234,27 +234,22 @@ UserRouter.post('/register', async (req, res) => {
 });
 
 
-
-app.post('/api/user/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   try {
-      const { dni, contrasena } = req.body;
+      const { dni, contrasena } = req.body; 
       console.log('Intentando iniciar sesión con:', { dni, contrasena });
-
       const patient = await svc.login(dni, contrasena);
-
-      console.log("En index.js, el patient devolvió: " + patient)
+      console.log("En index.js, el patient devolvió: " + patient);
       if (!patient) {
-          return res.status(401).json({ message: 'Credenciales inválidas' });
-      }
-
-      const token = jwt.sign({ id: patient.id }, JWT_SECRET, { expiresIn: '365d' });
-      res.status(200).json({ patient, token }); // Devuelve el usuario y el token
+        return res.status(401).json({ message: 'Credenciales inválidas' });
+    }
+    const token = jwt.sign({ id: patient.id }, JWT_SECRET, { expiresIn: '365d' });    
+      res.status(200).json({ patient, token }); 
   } catch (error) {
       console.error('Error durante el inicio de sesión:', error);
       res.status(500).json({ message: error.message });
   }
 });
-
 
 
 
