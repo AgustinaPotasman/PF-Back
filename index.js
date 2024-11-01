@@ -20,8 +20,8 @@ const pool = require('./src/configs/db-configs');
 const svc = new PatientsService();
 const JWT_SECRET = 'your_jwt_secret';
 const cors = require('cors');
+const PatientRepository = require('./src/repositories/pacientes-repositories');
 const app = express();
-
 
 
 app.use(bodyParser.json());
