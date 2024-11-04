@@ -1,17 +1,15 @@
 const pool = require('../configs/db-configs');
 const bcrypt = require('bcryptjs');
-
 class PatientRepository {
     crearPaciente = async (nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto) => {
         const client = await pool.connect();
         try {
-            
             const hashedPassword = await bcrypt.hash(contrasena, 10);
             const query = `
-    INSERT INTO public."Paciente" VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-`;
+                INSERT INTO public."Paciente" VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `;
 
-console.log(nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto);
+            console.log(nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto); // Verifica que 'dni' no sea undefined
             await client.query(query, [nombre, apellido, dni, gmail, obra_social, hashedPassword, telefono, foto]);
             return true; 
         } catch (error) {

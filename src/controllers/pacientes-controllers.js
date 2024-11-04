@@ -4,36 +4,9 @@ const PatientsService = require('../services/pacientes-service');
 const jwt = require('jsonwebtoken');
 const { authenticateToken } = require('../middlewares/auth-middleware');
 const pool = require('../configs/db-configs');
-const UserRouter = Router();
+
 const svc = new PatientsService();
 const JWT_SECRET = 'your_jwt_secret';
-
-
-UserRouter.post('/register', async (req, res) => {
-    const { nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto } = req.body;
-
-    if (!nombre || !apellido || !dni || !gmail || !obra_social || !contrasena || !telefono) {
-        return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
-    }
-
-    if (contrasena.length < 3) {
-        return res.status(400).json({ message: 'La contraseña debe tener al menos 3 caracteres.' });
-    }
-
-    try {
-        const newUser = await svc.crearPaciente({ nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto });
-        if (!newUser) {
-            return res.status(400).json({ message: 'Error al registrar el usuario.' });
-        }
-
-        const token = jwt.sign({ gmail }, JWT_SECRET, { expiresIn: '365d' });
-        res.status(201).json({ message: 'Usuario registrado exitosamente', newUser, token });
-    } catch (error) {
-        console.error('Error durante el registro:', error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
 
 
 

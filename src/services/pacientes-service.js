@@ -13,7 +13,7 @@ class PatientsService {
 
     crearPaciente = async ({ nombre, apellido, DNI, gmail, obra_social, contrasena, telefono, foto }) => {
         return this.repos.crearPaciente(nombre, apellido, DNI, gmail, obra_social, contrasena, telefono, foto);
-    }
+    }    
     
 }
 

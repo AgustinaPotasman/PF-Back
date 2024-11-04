@@ -11,7 +11,6 @@ const ITService = require('./src/services/insertarTurno-service');
 const BTService = require('./src/services/borrarTurno-service');
 const UTService = require('./src/services/unTurno-service');
 const PatientService = require('./src/services/pacientes-service');
-const UserRouter = require('./src/controllers/pacientes-controllers'); 
 const { Router } = express;
 const PatientsService = require('./src/services/pacientes-service'); 
 const jwt = require('jsonwebtoken');
@@ -22,6 +21,7 @@ const JWT_SECRET = 'your_jwt_secret';
 const cors = require('cors');
 const PatientRepository = require('./src/repositories/pacientes-repositories');
 const app = express();
+const UserRouter = Router();
 
 
 app.use(bodyParser.json());
@@ -206,32 +206,25 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });*/
+app.post('/api/user/register', async (req, res) => {
+  console.log("Datos recibidos en el servidor:", req.body);
+  const { nombre, apellido, DNI, gmail, contrasena, telefono, foto, ObraSocial } = req.body; // Cambié 'dni' a 'DNI'
 
-UserRouter.post('/register', async (req, res) => {
-  const { nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto } = req.body;
-
-  if (!nombre || !apellido || !dni || !gmail || !obra_social || !contrasena || !telefono) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+  if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
   }
-
-  if (contrasena.length < 3) {
-      return res.status(400).json({ message: 'La contraseña debe tener al menos 3 caracteres.' });
-  }
-
   try {
-    const newUser = await svc.crearPaciente({ nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto });
-    if (newUser !== true) { // Check for specific return value
-        return res.status(400).json({ message: newUser }); // Send the specific error message
-    }
-    
-
-      const token = jwt.sign({ gmail }, JWT_SECRET, { expiresIn: '365d' });
-      res.status(201).json({ message: 'Usuario registrado exitosamente', newUser, token });
+      const newUser = await svc.crearPaciente({ nombre, apellido, DNI, gmail, obra_social: ObraSocial, contrasena, telefono, foto });
+      if (!newUser) {
+          return res.status(400).json({ message: 'Error al registrar el paciente.' });
+      }
+      res.status(201).json({ message: 'Paciente registrado exitosamente', newUser });
   } catch (error) {
-      console.error('Error durante el registro:', error); // Log the error
-      res.status(500).json({ message: error.message });
+      console.error('Error al crear el usuario:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
   }
 });
+
 
 
 app.post('/api/login', async (req, res) => {
