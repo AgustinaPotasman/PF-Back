@@ -24,21 +24,44 @@ class PatientRepository {
         const client = await pool.connect();
         try {
             console.log('Datos recibidos:', { DNI, contrasena }); 
+      
             console.log(`Buscando paciente con DNI: ${DNI}`);
-            const query = `SELECT * FROM public."Paciente" WHERE "DNI" = $1`;
-            const result = await client.query(query, [DNI]);
-            const patient = result.rows[0];
-            console.log('Resultado de la consulta:', patient);
+            const pacienteQuery = `SELECT * FROM public."Paciente" WHERE "DNI" = $1`;
+            const pacienteResult = await client.query(pacienteQuery, [DNI]);
+            const paciente = pacienteResult.rows[0];
             
-            if (patient && patient['Contraseña'] === contrasena) {
-                return patient; 
+            if (paciente) {
+                console.log('Resultado de la consulta a Paciente:', paciente);
+    
+                if (paciente['Contraseña'] === contrasena) {
+                    return paciente; 
+                }
+                
+                if (await bcrypt.compare(contrasena, paciente['Contraseña'])) {
+                    return paciente; 
+                }
+            }
+            
+
+            console.log(`Buscando medico con DNI: ${DNI}`);
+            const medicoQuery = `SELECT * FROM public."Medico" WHERE "DNI" = $1`;
+            const medicoResult = await client.query(medicoQuery, [DNI]);
+            const medico = medicoResult.rows[0];
+    
+            if (medico) {
+                console.log('Resultado de la consulta a Medico:', medico);
+    
+                if (medico['Contraseña'] === contrasena) {
+                    return medico; 
+                }
+                
+                if (await bcrypt.compare(contrasena, medico['Contraseña'])) {
+                    return medico; 
+                }
             }
     
-            if (patient && await bcrypt.compare(contrasena, patient['Contraseña'])) {
-                 return patient; 
-            }
-            
             return null; 
+    
         } catch (error) {
             console.error('Error durante el inicio de sesión:', error);
             throw error;
@@ -46,6 +69,7 @@ class PatientRepository {
             client.release();
         }
     }
+    
     
     
 

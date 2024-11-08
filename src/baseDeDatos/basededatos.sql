@@ -110,6 +110,7 @@ CREATE TABLE public."Medico" (
     "Gmail" text NOT NULL,
     "Telefono" text NOT NULL,
     "Foto" text,
+    "contraseña" character varying NOT NULL,
     "idArea" integer NOT NULL
 );
 
@@ -122,6 +123,7 @@ ALTER TABLE public."Medico" OWNER TO postgres;
 --
 
 CREATE TABLE public."Paciente" (
+    "Id" integer NOT NULL, 
     "Nombre" character varying NOT NULL,
     "Apellido" character varying NOT NULL,
     "DNI" text NOT NULL,
