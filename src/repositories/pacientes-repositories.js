@@ -6,7 +6,8 @@ class PatientRepository {
         try {
             const hashedPassword = await bcrypt.hash(contrasena, 10);
             const query = `
-                INSERT INTO public."Paciente" VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            insert into public. "Paciente" ("Nombre", "Apellido", "DNI", "Gmail", "ObraSocial", "Contraseña", "Telefono", "Foto") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                        
             `;
 
             console.log(nombre, apellido, dni, gmail, obra_social, contrasena, telefono, foto); // Verifica que 'dni' no sea undefined
