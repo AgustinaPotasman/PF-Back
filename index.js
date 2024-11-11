@@ -40,7 +40,7 @@ app.post('/api/turnos', async (req, res) => {
   }
 });
 
-app.get('/api/areas', async (req, res) => {
+app.get('/api/areas', authenticateToken, async (req, res) => {
   try {
     const areas = await areaService.obtenerEspecialidades();
     res.status(200).json(areas);
@@ -232,7 +232,7 @@ app.post('/api/login', async (req, res) => {
       const { dni, contrasena } = req.body; 
       console.log('Intentando iniciar sesión con:', { dni, contrasena });
       const patient = await svc.login(dni, contrasena);
-      console.log("En index.js, el patient devolvió: " + patient);
+      console.log("En index.js, el patient devolvió: " + JSON.stringify(patient));
       if (!patient) {
         return res.status(401).json({ message: 'Credenciales inválidas' });
     }
