@@ -208,22 +208,35 @@ app.post('/api/register', async (req, res) => {
 });*/
 app.post('/api/user/register', async (req, res) => {
   console.log("Datos recibidos en el servidor:", req.body);
-  const { nombre, apellido, DNI, gmail, contrasena, telefono, foto, ObraSocial } = req.body; // Cambié 'dni' a 'DNI'
+  const { nombre, apellido, DNI, gmail, contrasena, telefono, foto, ObraSocial, idArea } = req.body;
 
   if (!nombre || !apellido || !DNI || !gmail || !contrasena || !telefono) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
   }
+
   try {
-      const newUser = await svc.crearPaciente({ nombre, apellido, DNI, gmail, obra_social: ObraSocial, contrasena, telefono, foto });
-      if (!newUser) {
-          return res.status(400).json({ message: 'Error al registrar el paciente.' });
-      }
-      res.status(201).json({ message: 'Paciente registrado exitosamente', newUser });
+    let userNuevo;
+
+    if (ObraSocial) {
+      userNuevo = await svc.crearPaciente({ nombre, apellido, DNI, gmail, obra_social: ObraSocial, contrasena, telefono, foto });
+    } else if (idArea) {
+      userNuevo = await svc.crearMedico({ nombre, apellido, DNI, gmail, contrasena, telefono, foto, idArea });
+    } else {
+      return res.status(400).json({ message: 'No se pudo determinar el tipo de usuario.' });
+    }
+
+    if (!userNuevo) {
+      return res.status(400).json({ message: `Error al registrar el usuario.` });
+    }
+
+    res.status(201).json({ message: 'Usuario registrado exitosamente', userNuevo });
   } catch (error) {
-      console.error('Error al crear el usuario:', error);
-      res.status(500).json({ message: 'Error interno del servidor.' });
+    console.error('Error al registrar el usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 });
+
+
 
 
 
